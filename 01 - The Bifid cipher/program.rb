@@ -24,6 +24,7 @@ class BifidCipher
   # @param body [String] es la frase a desencriptar
   # @return [String] La frase desencriptada
   def decrypt(body=@frase)
+    @indices = []
     @frase = body.gsub(/\s+/, "")
     ret = ""
     get_index
@@ -40,6 +41,7 @@ class BifidCipher
   # @param body [String] La frase a Encriptar
   # @return [String] La frase encriptada
   def encrypt(body=@frase)
+    @indices = []
     @frase = body.gsub(/\s+/, "")
     ret = ""
     get_index
@@ -100,8 +102,13 @@ body = lines[1].gsub(/\s+/, "")
 
 cipher = BifidCipher.new
 
-# puts cipher.encrypt("BRING ALL YOUR MONEY")
-# puts cipher.decrypt("PDRRNGBENOPNIAGGF")
+# puts """
+#  Encriptar BRING ALL YOUR MONEY ---
+#  #{cipher.encrypt("BRING ALL YOUR MONEY")}
+#  Desencriptar PDRRNGBENOPNIAGGF ---
+#  #{cipher.decrypt("PDRRNGBENOPNIAGGF")}
+#  ---
+# """
 
 case method
 when "DECRYPT"
