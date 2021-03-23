@@ -37,10 +37,7 @@ class BifidCipher
     mid2 = @indices.flatten.each_slice(@indices.flatten.size/2).to_a[1]
 
     dec = mid1.zip(mid2)
-    dec.each do
-      |x, y|
-      ret << @tabla[x][y]
-    end
+    dec.each { |x, y| ret << @tabla[x][y] }
     return ret
   end
 
@@ -53,17 +50,10 @@ class BifidCipher
     ret = ""
     get_index
     enc = Array.new
-    for x in @indices
-      enc << x[0]
-    end
-    for x in @indices
-      enc << x[1]
-    end
+    for x in @indices;enc << x[0];end
+    for x in @indices;enc << x[1]; end
     enc = enc.each_slice(2).to_a
-    enc.each do
-      |x,y|
-      ret << @tabla[x][y]
-    end
+    enc.each{|x,y| ret << @tabla[x][y]}
     return ret
   end
 
