@@ -11,17 +11,11 @@ class BifidCipher
   # tableau
   def initialize(
         frase="",
-        tabla=[
-          ['E', 'N', 'C', 'R', 'Y'],
-          ['P', 'T', 'A', 'B', 'D'],
-          ['F', 'G', 'H', 'I', 'K'],
-          ['L', 'M', 'O', 'Q', 'S'],
-          ['U', 'V', 'W', 'X', 'Z']
-        ],
+        tabla_frase="ENCRYPT",
         indices=[]
       )
     @frase = frase.gsub(/\s+/, "")
-    @tabla = tabla
+    @tabla = gen_abc(tabla_frase)
     @indices = indices
   end
 
@@ -58,6 +52,31 @@ class BifidCipher
   end
 
   private
+
+  ##
+  # Esta metodo genera la tabla 5x5 a partir de una palabra
+  # @param passphrase [String] La frase a "jugar"
+  # @return [Array] Un arreglo 5x5
+  def gen_abc(passphrase="ENCRYPT")
+    tabla = Array.new
+    abecedario = [];  ("A".."Z").each{ |x| abecedario << x }
+    i = j = 0
+    while i < 25
+      if i < passphrase.size
+        tabla[i] = passphrase[i]
+      else
+        if tabla.include?(abecedario[j]) or abecedario[j] == "J"
+          i -= 1
+          j += 1
+        else
+          tabla[i] = abecedario[j]
+        end
+      end
+      i += 1
+    end
+    tabla = tabla.each_slice(5).to_a
+    return tabla
+  end
 
   def get_index
     @frase.each_char do
