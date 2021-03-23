@@ -90,5 +90,5 @@ when "DECRYPT"
 when "ENCRYPT"
   puts cipher.encrypt(body)
 else
-    :nop
+  :nop
 end
