@@ -10,3 +10,25 @@ Gemfile.lock
 coverage
 
 *.zip
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.lol
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+_minted-main
+*.log
+*.pdf
+_region_.tex
+.auctex-auto
