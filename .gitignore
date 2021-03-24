@@ -32,3 +32,5 @@ _minted-main
 *.pdf
 _region_.tex
 .auctex-auto
+*.loa
+*.lot
