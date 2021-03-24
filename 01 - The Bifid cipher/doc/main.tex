@@ -1,0 +1,249 @@
+\documentclass[onecolumn]{IEEEtran}
+
+\input{./contantes.tex}
+\input{./conf.tex}
+
+\begin{document}
+\title{\tituloPractica}
+\author{\autores}
+
+\maketitle{}
+% \twocolumn[ \begin{@twocolumnfalse}
+\tableofcontents{}
+% \end{@twocolumnfalse} \bigskip{}]
+\bigskip{}
+
+\begin{abstract}
+  En la presente se explica la forma en la cual se
+  implemento el método de cifrado nombrado \textit{Bifid}
+\end{abstract}
+
+
+\section{Introducción}\label{sec:introduccion}
+El cifrado bífido fue inventado por Fèlix-Marie Delastelle (1840--1902) y, aunque nunca se usó en ninguna aplicación ``seria'', se convirtió en uno de los cifrados más populares entre los criptólogos ``aficionados''.
+
+La clave consiste en una tabla de claves, compuesta por los caracteres del alfabeto, normalmente un cuadrado de $5 \times 5$ con los caracteres i y j idénticos, también llamada clave de Polibio.
+
+
+
+\subsection{Operación}\label{sec:operacion}
+Primero, se dibuja un cuadrado polibio de alfabeto mixto, donde la I y la J
+comparten su posición.
+\begin{table}[H]
+  \centering{}
+  \caption{Tableau de $5 \times 5$}\label{tab:pol}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+  & 0 & 1 & 2 & 3 & 4 \\ \hline
+0 & E & N & C & R & Y \\ \hline
+1 & P & T & A & B & D \\ \hline
+2 & F & G & H & I & K \\ \hline
+3 & L & M & O & Q & S \\ \hline
+4 & U & V & W & X & Z \\ \hline
+\end{tabular}
+\end{table}
+
+El mensaje se convierte a sus coordenadas de la manera habitual, pero
+se escriben verticalmente debajo:
+\begin{table}[H]
+  \centering{}
+\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+M & E & E & T & M & E & O & N & F & R & I & D & A & Y \\ \hline
+3 & 0 & 0 & 1 & 3 & 0 & 3 & 0 & 2 & 0 & 2 & 1 & 1 & 0 \\ \hline
+1 & 0 & 0 & 1 & 1 & 0 & 2 & 1 & 0 & 3 & 3 & 4 & 2 & 4 \\ \hline
+\end{tabular}
+\end{table}
+
+Luego se leen en filas:
+\begin{center}
+  \texttt{3 0 0 1 3 0 3 0 2 0 2 1 1 0 1 0 0 1 1 0
+    2 1 0 3 3 4 2 4 }
+\end{center}
+
+Luego se dividen en pares nuevamente, y los pares se vuelven a
+convertir en letras usando el cuadro~\ref{tab:pol}.
+\begin{table}[H]
+  \centering{}
+  \begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+\hline
+30 & 01 & 30 & 30 & 20 & 21 & 10 & 10 & 01 & 10 & 21 & 03 & 34 & 24 \\ \hline
+L & N & L & L & F & G & P & P & N & P & G & R & S & K \\ \hline
+\end{tabular}
+\end{table}
+
+De esta manera, cada carácter de texto cifrado depende de dos caracteres de texto plano, por lo que el bífido es un cifrado digráfico, como el cifrado de Playfair. Para descifrar, el procedimiento simplemente se invierte.
+
+\section{Desarrollo}\label{sec:desarrollo}
+
+\subsection{Generar la tabla de llaves}\label{sec:generar-la-tabla}
+Primero tenemos que genera nuestro Polibio, para ello pasamos una cadena
+que no contenga palabras repetidas y después lo llenamos con el resto
+del alfabeto sin repetir letras de la cadena, en el algoritmo~\ref{alg:tableau}
+se muestra como se implemente lo anterior dicho.
+
+\begin{algorithm}[H]
+\SetAlgoLined{}
+\KwResult{$tabla$ de $5 \times 5$}
+$tabla := arreglo(5 \times 5)$\;
+$i = j = 0$\;
+ \While{$iterador < (5 \times 5)$}{
+   \eIf{$iterador < tamanio(frase)$}{
+   $tabla[i] := abecedario[j]$\;
+   }{
+     \eIf{$(abecedario[iterador]\in tabla) \lor (abecedario[iterador] = "J")$}{
+       $j := j - 1$\;
+       $i := i - 1$\;
+     }{
+       $tabla[i] := abecedario[j]$\;
+     }
+   }
+   $i := i + 1$\;
+ }
+ \Return{$tabla$ dividida en 5 partes;}
+ \caption{Creación de tableau}\label{alg:tableau}
+\end{algorithm}
+\newpage{}
+En ruby su aproximación seria
+\begin{code}
+  \inputminted[firstline=58, lastline=81]{ruby}{../program.rb}
+  \caption{Generación de tabla en ruby}\label{lst:generar-la-tabla-1}
+\end{code}
+
+\newpage{}
+\subsection{Desencriptar}\label{sec:desencriptar}
+
+
+Para Descifrar y Cifrar, el método es casi similar.
+
+Para descifrar primero identificamos
+sus coordenadas para después separar la clave ubicada en el
+índice superior del inferior, donde esta última se concatena al final
+en un nuevo arreglo generado como un nuevo índice descifrado para después
+usarlo con nuestra tabla de claves.
+\begin{algorithm}
+  \SetAlgoLined{}
+  \KwResult{Frase desencriptada}
+  $tableau$\;
+  $lista\_indice:=(identificar\ coordenadas\ de\ la\ frase)$\;
+  $lista\_indice:=desagrupar\ y\ poner\ al\ final\ segunda\ agrupacion$\;
+  $mitad1:=primera\_mitad(lista\_indice)$\;
+  $mitad2:=segunda\_mitad(lista\_indice)$\;
+  \For{$i\gets0$ \KwTo $tamanio(mitad1)$ }{
+    $concatenar($
+    $palabra\_decodificada,\ $
+    $tabla[mitad1[i]][mitad2[i]]$
+    $)$\;
+  }
+
+  \Return{$palabra\_decodificada$\;}
+
+  \caption{Desencriptar}\label{alg:desc}
+\end{algorithm}
+
+Su aproximación en ruby sería la siguiente:
+\begin{code}
+  \inputminted[firstline=23, lastline=37]{ruby}{../program.rb}
+  \caption{Implementación del desencriptado en ruby}\label{sec:generar-la-tabla-2}
+\end{code}
+\newpage{}
+\subsection{Encriptar}\label{sec:encriptar}
+
+Para encriptar, el método es similar a la de
+desencriptar\ref{sec:desencriptar}, en ves de jugar con las mitades,
+directamente lo ciframos con la tabla, ponemos los índices superiores primero
+y después los índices inferiores, después esa cadena generada la traducimos con
+la tabla y tenemos nuestra frase cifrada.
+\begin{algorithm}
+  \SetAlgoLined{}
+  \KwResult{Frase Encriptada}
+  $tableau$\;
+  $lista\_indice:=(identificar\ coordenadas\ de\ la\ frase)$\;
+
+  \For{$i\gets0$ \KwTo $tamanio(lista\_indice)$ }{
+    $concatenar($
+    $palabra\_codificada,\ $
+    $tabla[lista\_indice[i][0]][lista\_indice[i][1]]$
+    $)$\;
+  }
+
+  \Return{$palabra\_codificada$\;}
+
+  \caption{Encriptar}\label{alg:enc}
+\end{algorithm}
+
+En ruby sería:
+\begin{code}
+  \inputminted[firstline=39, lastline=54]{ruby}{../program.rb}
+\end{code}
+
+\newpage{}
+
+\section{Ejecución}\label{sec:ejecucion}
+
+Se va a ejecutar dos ejemplos:
+\begin{enumerate}
+  \item \texttt{encrypt BRING ALL YOUR MONEY}
+  \item \texttt{decrypt PDRRNGBENOPNIAGGF}
+\end{enumerate}
+
+Directamente, utilizando la clase
+\begin{code}[H]
+  \begin{minted}{ruby}
+cipher = BifidCipher.new
+
+puts """
+ Encriptar BRING ALL YOUR MONEY ---
+ #{cipher.encrypt("BRING ALL YOUR MONEY")}
+ Desencriptar PDRRNGBENOPNIAGGF ---
+ #{cipher.decrypt("PDRRNGBENOPNIAGGF")}
+ ---
+"""
+  \end{minted}
+\end{code}
+
+Tenemos como respuesta
+\begin{code}
+  \begin{minted}{shell-session}
+$ ruby program.rb
+
+ Encriptar BRING ALL YOUR MONEY ---
+ PFGQRUQERQTFYFMGY
+ Desencriptar PDRRNGBENOPNIAGGF ---
+ TRAVELNORTHATONCE
+ ---
+  \end{minted}
+\end{code}
+
+
+\section{Conclusiones}\label{sec:concluciones}
+Existen algoritmos de cifrado simple y fáciles de implementar, en este caso
+el cifrado Bifid fue sencillo de implementar en el lenguaje Ruby, conociendo
+bien el lenguaje claro. Aunque este algoritmo es, aparentemente fácil de romper
+ya que el cuadro es muy finito a comparación de otros métodos de cifrado.
+
+\newpage{}
+
+
+
+
+\addcontentsline{toc}{section}{Índice de códigos}
+\listoflistings{}
+\addcontentsline{toc}{section}{Índice de Algoritmos}
+\listofalgorithms{}
+\addcontentsline{toc}{section}{Índice de Cuadros}
+\listoftables{}
+
+\nocite{*}
+\printbibliography{}
+
+\appendices
+\section{First Appendix}\label{Codigo completo}
+\begin{code}
+  \inputminted[fontsize=\scriptsize]{ruby}{../program.rb}
+  \caption{Link del repositorio
+    \url{https://github.com/tysyak/criptografia-20212}}
+\end{code}
+
+
+\end{document}

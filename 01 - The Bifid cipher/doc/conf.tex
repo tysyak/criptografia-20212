@@ -1,0 +1,86 @@
+\usepackage[left=1.5cm,right=1.5cm]{geometry}
+\usepackage[
+spanish,
+es-nodecimaldot
+%english
+]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{crossreftools}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\usepackage{minted}
+\usepackage{subfiles}
+\usepackage[acronym, toc]{glossaries}
+
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{multicol}
+
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{caption}
+
+\definecolor{LightGray}{gray}{0.9}
+\definecolor{DarkGray}{HTML}{191919}
+\definecolor{custom}{HTML}{F8F8F8}
+
+\newenvironment{code}{\captionsetup{type=listing}}{}
+
+\usemintedstyle{emacs}
+
+\usepackage[ruled,vlined]{algorithm2e}
+
+
+\renewcommand{\listingscaption}{Código}
+\renewcommand\listoflistingscaption{Índice de \listingscaption\@s}
+
+\setminted[bash]{frame=lines,framesep=2mm,baselinestretch=1.2,fontsize=\scriptsize,breaklines=true}
+\setminted[bat]{frame=lines,framesep=2mm,baselinestretch=1.2,fontsize=\scriptsize,breaklines=true}
+\setminted[linux-config]{frame=lines,framesep=2mm,baselinestretch=1.2,fontsize=\scriptsize,breaklines=true}
+\setminted[shell-session]{frame=lines,framesep=2mm,baselinestretch=1.2,fontsize=\scriptsize,breaklines=true}
+\setminted[ruby]{frame=lines,framesep=2mm,baselinestretch=1.2,breaklines=true}
+\graphicspath{{./img_common}{./img}}
+\usepackage[T1]{fontenc}
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+
+\pagestyle{fancy}
+\fancyfoot[R]{\thepage}
+\fancyfoot[C]{\includegraphics[width=0.05\textwidth]{inge_logo}}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\rightmark}
+
+\hypersetup{
+  pdfauthor={\autores},
+  pdftitle={\tituloPractica},
+  pdfkeywords={{cryptografía}},
+  pdfcreator={XeTex},
+  pdflang={Spanish}}
+
+
+\usepackage{microtype}
+\usepackage[
+backend=biber,
+style=ieee
+]{biblatex}
+\addbibresource{main.bib}
